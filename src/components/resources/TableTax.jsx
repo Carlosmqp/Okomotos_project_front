@@ -21,6 +21,7 @@ function TableTax({ onLogout = () => {} }) {
   const [tax, setTax] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTax, setSelectedTax] = useState(null);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   const fetchTaxs = async (token) => {
     try {
@@ -88,6 +89,7 @@ function TableTax({ onLogout = () => {} }) {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
+      setLoadingScreen(true);
 
       const response = await fetch(
         `${API_BASE_URL}/taxes/update/${selectedTax.id}`,
@@ -119,6 +121,8 @@ function TableTax({ onLogout = () => {} }) {
       }
     } catch (error) {
       toast.error("¡Error de servidor!");
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
@@ -190,6 +194,8 @@ function TableTax({ onLogout = () => {} }) {
       return;
     }
 
+    setLoadingScreen(true);
+
     try {
       const response = await fetch(`${API_BASE_URL}/taxes/delete/${id}`, {
         method: "DELETE",
@@ -218,11 +224,26 @@ function TableTax({ onLogout = () => {} }) {
       }
     } catch (error) {
       toast.error("¡Error de servidor!");
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
       {/* Search */}
       <div className="flex w-full mb-4 justify-between">
         <input
@@ -261,8 +282,14 @@ function TableTax({ onLogout = () => {} }) {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="py-2 text-center">
+                <td colSpan="6" className="py-2 text-center">
                   Cargando...
+                </td>
+              </tr>
+            ) : tax.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="py-4 text-center text-gray-500">
+                  No hay Impuestos disponibles.
                 </td>
               </tr>
             ) : (

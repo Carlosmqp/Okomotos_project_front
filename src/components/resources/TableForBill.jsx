@@ -36,6 +36,7 @@ function TableForBill({
   const [clientData, setClientData] = useState(null);
   const [nextInvoiceNumber, setNextInvoiceNumber] = useState(1);
   const [cityData, setCityData] = useState(null);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   const pdfRef = useRef();
 
@@ -96,6 +97,36 @@ function TableForBill({
     }
   };
 
+  const fetchLastInvoiceNumber = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${API_BASE_URL}/invoices/get_all_invoices`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        let lastCode = 0;
+        if (data.length > 0) {
+          const lastElement = data[data.length - 1];
+          lastCode = lastElement.id;
+        }
+        return lastCode + 1;
+      }
+      return nextInvoiceNumber;
+    } catch (error) {
+      console.error("Error:", error);
+      return nextInvoiceNumber;
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -104,53 +135,15 @@ function TableForBill({
       return;
     }
 
-    const fetchInvoice = async () => {
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/invoices/get_all_invoices`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-
-          let lastCode = 0;
-          if (data.length > 0) {
-            const lastElement = data[data.length - 1];
-            lastCode = lastElement.id;
-          }
-
-          setNextInvoiceNumber(lastCode + 1);
-        } else if (
-          !response.ok &&
-          response.redirected &&
-          response.url.includes("login_failed")
-        ) {
-          onLogout();
-        } else {
-          try {
-            await response.json();
-          } catch (jsonError) {
-            console.error("Response is not JSON:", jsonError);
-          }
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
-      }
+    const fetchInitialData = async () => {
+      const nextNumber = await fetchLastInvoiceNumber();
+      setNextInvoiceNumber(nextNumber);
+      setTimeout(() => {
+        fetchInventary(token);
+      }, 500);
     };
-    fetchInvoice();
 
-    setTimeout(() => {
-      fetchInventary(token);
-    }, 500);
+    fetchInitialData();
 
     if (!selectedClient) return;
 
@@ -193,7 +186,6 @@ function TableForBill({
         console.error("Error de conexión:", error);
       }
     };
-
     fetchClientData();
   }, [selectedClient, searchTerm, currentPage, perPage]);
 
@@ -202,10 +194,10 @@ function TableForBill({
   };
 
   const handlePriceChange = (rowId, value) => {
-    setSelectedPrices((prev) => ({
-      ...prev,
-      [rowId]: parseFloat(value) || 0,
-    }));
+    // setSelectedPrices((prev) => ({
+    //   ...prev,
+    //   [rowId]: parseFloat(value) || 0,
+    // }));
     updateValue(rowId, selectedUnits[rowId] || 0, parseFloat(value) || 0);
   };
 
@@ -276,7 +268,7 @@ function TableForBill({
       return;
     }
 
-    console.log(selectedPaymentType);
+    setLoadingScreen(true);
 
     const invoiceData = {
       client_id: selectedClient,
@@ -310,7 +302,6 @@ function TableForBill({
       }
 
       const invoice = await response.json();
-      console.log("Invoice created successfully:", invoice);
       const invoiceId = invoice.id;
 
       const checkedRowsData = inventories.filter((row) => checkedRows[row.id]);
@@ -431,11 +422,16 @@ function TableForBill({
       setSelectedPrices({});
       setSelectedValues({});
       setCheckedRows({});
-      setDiscount("");
+      setDiscount(0);
 
       toast.success("¡Factura generada con exito!");
+
+      const newNextNumber = await fetchLastInvoiceNumber();
+      setNextInvoiceNumber(newNextNumber);
     } catch (error) {
       toast.error(error);
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
@@ -464,6 +460,19 @@ function TableForBill({
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
       {/* Search */}
       <div className="flex w-full mb-4 justify-between">
         <input
@@ -499,8 +508,14 @@ function TableForBill({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="py-2 text-center">
+                <td colSpan="9" className="py-2 text-center">
                   Cargando...
+                </td>
+              </tr>
+            ) : inventories.length === 0 ? (
+              <tr>
+                <td colSpan="9" className="py-4 text-center text-gray-500">
+                  No hay información disponibles.
                 </td>
               </tr>
             ) : (
@@ -536,9 +551,15 @@ function TableForBill({
                         name=""
                         id=""
                         className="w-56 h-10 px-2 rounded-md border-2 border-lime-800 outline-none"
-                        onChange={(e) =>
-                          handlePriceChange(row.id, e.target.value)
-                        }
+                        value={selectedPrices[row.id] || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setSelectedPrices((prev) => ({
+                            ...prev,
+                            [row.id]: value,
+                          }));
+                          handlePriceChange(row.id, value);
+                        }}
                       >
                         <option value="">Seleccionar</option>
                         {filteredInventories.map((inventory) => (

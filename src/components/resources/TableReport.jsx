@@ -41,6 +41,7 @@ function TableReport({ onLogout = () => {} }) {
   const [newStock, setNewStock] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   const fetchInventary = async (token) => {
     try {
@@ -320,14 +321,21 @@ function TableReport({ onLogout = () => {} }) {
   };
 
   const handleSave = async () => {
-    try {
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+    setLoadingScreen(true);
+
+    try {
       const productData = {
         name: selectedInventary.item,
         category_id: selectedInventary.category_id,
       };
 
+      
       const productResponse = await fetch(
         `${API_BASE_URL}/products/update/${selectedInventary.code}`,
         {
@@ -339,7 +347,8 @@ function TableReport({ onLogout = () => {} }) {
           body: JSON.stringify(productData),
         }
       );
-
+      console.log(productResponse);
+      
       if (!productResponse.ok) {
         const error = await productResponse.json();
         toast.error("¡Error al actualizar el producto básico!");
@@ -354,6 +363,8 @@ function TableReport({ onLogout = () => {} }) {
         city_price: selectedInventary.city_price,
         wholesale_price: selectedInventary.wholesale_price,
       };
+
+      // console.log(inventaryData);
 
       const response = await fetch(
         `${API_BASE_URL}/inventory/update/${selectedInventary.id}`,
@@ -414,6 +425,8 @@ function TableReport({ onLogout = () => {} }) {
     } catch (error) {
       toast.error("¡Error de servidor!");
       console.error("Error:", error);
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
@@ -431,6 +444,8 @@ function TableReport({ onLogout = () => {} }) {
     }
 
     if (!selectedRow) return;
+
+    setLoadingScreen(true);
 
     try {
       let apiUrl = `${API_BASE_URL}/inventory/update/${selectedRow.id}`;
@@ -528,6 +543,8 @@ function TableReport({ onLogout = () => {} }) {
       }
     } catch (error) {
       toast.error("Error de servidor");
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
@@ -644,6 +661,8 @@ function TableReport({ onLogout = () => {} }) {
     }
 
     if (!selectedRow) return;
+
+    setLoadingScreen(true);
 
     const sampleData = {
       code: newCode,
@@ -826,6 +845,8 @@ function TableReport({ onLogout = () => {} }) {
       setShowModal(false);
     } catch (error) {
       toast.error("¡Error de servidor!");
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
@@ -919,8 +940,22 @@ function TableReport({ onLogout = () => {} }) {
       setQuantity(existingStock);
     }
   };
+
   return (
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
       {/* Search */}
       <div className="flex w-full mb-4 justify-between">
         <input
@@ -985,8 +1020,14 @@ function TableReport({ onLogout = () => {} }) {
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan="7" className="py-2 text-center">
+              <td colSpan="11" className="py-2 text-center">
                 Cargando...
+              </td>
+            </tr>
+          ) : inventories.length === 0 ? (
+            <tr>
+              <td colSpan="11" className="py-4 text-center text-gray-500">
+                No hay información disponibles.
               </td>
             </tr>
           ) : (

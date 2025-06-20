@@ -34,11 +34,9 @@ function SailGraphic({ report, onLogout = () => {} }) {
         onLogout();
       } else {
         console.error("Error fetching annual sales data");
-        setChartData(monthlySampleData);
       }
     } catch (error) {
       console.error("Error:", error);
-      setChartData(monthlySampleData);
     } finally {
       setLoading(false);
     }
@@ -58,24 +56,21 @@ function SailGraphic({ report, onLogout = () => {} }) {
 
       if (response.ok) {
         const data = await response.json();
-        // Ordenar los datos por año y limitar a los últimos 5 años
         const sortedData = data
           .sort((a, b) => a.year - b.year)
           .slice(-5)
           .map((item) => ({
             ...item,
-            year: item.year.toString(), // Convertir año a string para el eje X
+            year: item.year.toString(),
           }));
         setChartData(sortedData);
       } else if (response.status === 401) {
         onLogout();
       } else {
         console.error("Error fetching yearly sales data");
-        setChartData(yearlySampleData);
       }
     } catch (error) {
       console.error("Error:", error);
-      setChartData(yearlySampleData);
     } finally {
       setLoading(false);
     }
@@ -114,11 +109,9 @@ function SailGraphic({ report, onLogout = () => {} }) {
         onLogout();
       } else {
         console.error("Error fetching inventory data");
-        setChartData(inventorySampleData);
       }
     } catch (error) {
       console.error("Error:", error);
-      setChartData(inventorySampleData);
     } finally {
       setLoading(false);
     }
@@ -133,42 +126,6 @@ function SailGraphic({ report, onLogout = () => {} }) {
       fetchInventoryData();
     }
   }, [report]);
-
-  const monthlySampleData = [
-    { month: "Ene", sales: 4000 },
-    { month: "Feb", sales: 3000 },
-    { month: "Mar", sales: 2000 },
-    { month: "Abr", sales: 2780 },
-    { month: "May", sales: 1890 },
-    { month: "Jun", sales: 2390 },
-    { month: "Jul", sales: 3490 },
-    { month: "Ago", sales: 4000 },
-    { month: "Sep", sales: 5000 },
-    { month: "Oct", sales: 6000 },
-    { month: "Nov", sales: 7000 },
-    { month: "Dic", sales: 8000 },
-  ];
-
-  const yearlySampleData = [
-    { year: "2019", sales: 15000 },
-    { year: "2020", sales: 25000 },
-    { year: "2021", sales: 35000 },
-    { year: "2022", sales: 45000 },
-    { year: "2023", sales: 55000 },
-  ];
-
-  const inventorySampleData = [
-    { name: "Producto 1", stock: 150, code: "P001" },
-    { name: "Producto 2", stock: 120, code: "P002" },
-    { name: "Producto 3", stock: 90, code: "P003" },
-    { name: "Producto 4", stock: 85, code: "P004" },
-    { name: "Producto 5", stock: 70, code: "P005" },
-    { name: "Producto 6", stock: 65, code: "P006" },
-    { name: "Producto 7", stock: 50, code: "P007" },
-    { name: "Producto 8", stock: 45, code: "P008" },
-    { name: "Producto 9", stock: 30, code: "P009" },
-    { name: "Producto 10", stock: 25, code: "P010" },
-  ];
 
   let dataKey, barName, barDataKey;
 
@@ -205,18 +162,14 @@ function SailGraphic({ report, onLogout = () => {} }) {
         <div className="flex items-center justify-center h-full">
           Cargando gráfico...
         </div>
+      ) : chartData.length === 0 ? (
+        <div className="flex items-center justify-center h-full text-gray-500 text-lg">
+          No hay información disponible.
+        </div>
       ) : (
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={
-              chartData.length > 0
-                ? chartData
-                : report === 1
-                ? monthlySampleData
-                : report === 2
-                ? yearlySampleData
-                : inventorySampleData
-            }
+            data={chartData}
             margin={{
               top: 5,
               right: 30,
@@ -246,7 +199,7 @@ function SailGraphic({ report, onLogout = () => {} }) {
             <Bar
               dataKey={barDataKey}
               name={barName}
-              fill={report === 3 ? "#70b64e" : "#70b64e"}
+              fill="#70b64e"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>

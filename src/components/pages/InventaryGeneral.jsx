@@ -26,6 +26,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
   const [refreshKey, setRefreshKey] = useState(0);
   const [categories, setCategories] = useState([]);
   const [fileName, setFileName] = useState("");
+  const [loadingScreen, setLoadingScreen] = useState(false);
   const resetForm = () => {
     setCode("");
     setItem("");
@@ -81,6 +82,8 @@ function InventaryGeneral({ onLogout = () => {} }) {
       console.error("No token found");
       return;
     }
+
+    setLoadingScreen(true);
 
     const inventoryData = {
       code: code,
@@ -177,6 +180,8 @@ function InventaryGeneral({ onLogout = () => {} }) {
       }
     } catch (error) {
       toast.error("¡Error de servidor!");
+    }finally{
+      setLoadingScreen(false);
     }
   };
 
@@ -187,6 +192,8 @@ function InventaryGeneral({ onLogout = () => {} }) {
       console.error("No token found");
       return;
     }
+
+    setLoadingScreen(true);
 
     try {
       const response = await fetch(
@@ -217,6 +224,8 @@ function InventaryGeneral({ onLogout = () => {} }) {
     } catch (error) {
       console.error("Error:", error);
       toast.error("Error al descargar la plantilla");
+    }finally{
+      setLoadingScreen(false);
     }
   };
 
@@ -241,6 +250,8 @@ function InventaryGeneral({ onLogout = () => {} }) {
       toast.error("El archivo debe ser un Excel (.xlsx)");
       return;
     }
+
+    setLoadingScreen(true);
 
     const formData = new FormData();
     formData.append("inventoryFile", file);
@@ -268,6 +279,8 @@ function InventaryGeneral({ onLogout = () => {} }) {
     } catch (error) {
       console.error("Error:", error);
       toast.error(error.message || "Error al procesar el archivo");
+    }finally{
+      setLoadingScreen(false);
     }
   };
 
@@ -278,6 +291,19 @@ function InventaryGeneral({ onLogout = () => {} }) {
 
   return (
     <div className="w-full px-3 content-center">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
       <div className="-mt-[72px]  w-full text-2xl mx-3 text-neutral-100 flex font-semibold italic text-shadow">
         <h1 className="first-letter:text-4xl first-letter:font-bold first-letter:text-lime-100">
           Inventario &nbsp;

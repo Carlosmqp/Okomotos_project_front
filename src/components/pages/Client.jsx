@@ -24,6 +24,7 @@ function Client({ onLogout = () => {} }) {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
     setFirstName("");
@@ -71,7 +72,7 @@ function Client({ onLogout = () => {} }) {
     }
 
     fetchCity(token);
-  });
+  }, []);
 
   const handleSave = async () => {
     const token = localStorage.getItem("token");
@@ -80,6 +81,8 @@ function Client({ onLogout = () => {} }) {
       console.error("No token found");
       return;
     }
+
+    setLoading(true);
 
     const clientData = {
       first_name: firstName,
@@ -103,7 +106,7 @@ function Client({ onLogout = () => {} }) {
       if (response.ok) {
         await response.json();
         toast.success("¡Cliente Creado!");
-        
+
         resetForm();
         setShowModalTopRight(false);
         setRefreshKey((prevKey) => prevKey + 1);
@@ -135,6 +138,8 @@ function Client({ onLogout = () => {} }) {
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -170,6 +175,19 @@ function Client({ onLogout = () => {} }) {
           </div>
         </div>
       </div>
+
+      {loading && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
 
       <div>
         {/* <!-- Modal --> */}

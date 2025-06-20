@@ -194,6 +194,10 @@ function TableReportFlash({ report, onLogout = () => {} }) {
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
       {loading ? (
         <div>Cargando...</div>
+      ) : filteredData.length === 0 ? (
+        <div className="text-gray-500 text-lg py-8 text-center w-full">
+          No hay información disponible.
+        </div>
       ) : (
         <div className="w-full overflow-x-auto">
           <table className="table-auto w-full border-collapse rounded-md overflow-hidden shadow-md">

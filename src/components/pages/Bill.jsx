@@ -30,6 +30,7 @@ function Bill({ onLogout = () => {} }) {
   const [selectedPaymentType, setSelectedPaymentType] = useState("");
   const [selectedPaymentTypeName, setSelectedPaymentTypeName] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   const resetForm = () => {
     setFirstName("");
@@ -175,6 +176,8 @@ function Bill({ onLogout = () => {} }) {
       return;
     }
 
+    setLoadingScreen(true);
+
     const clientData = {
       first_name: firstName,
       last_name: lastName,
@@ -209,7 +212,7 @@ function Bill({ onLogout = () => {} }) {
           },
         });
         const dataClient = await responseClient.json();
-        setClients(dataClient);
+        setClients(dataClient.data);
       } else {
         const error = await response.json();
 
@@ -232,6 +235,8 @@ function Bill({ onLogout = () => {} }) {
       }
     } catch (error) {
       showToastError();
+    }finally{
+      setLoadingScreen(false);
     }
   };
 
@@ -262,6 +267,19 @@ function Bill({ onLogout = () => {} }) {
 
   return (
     <div className="w-full px-3">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
       <div className="-mt-[72px] w-full text-2xl mx-3 text-neutral-100 flex font-semibold italic text-shadow">
         <h1 className="first-letter:text-4xl first-letter:font-bold first-letter:text-lime-100">
           Creación &nbsp;

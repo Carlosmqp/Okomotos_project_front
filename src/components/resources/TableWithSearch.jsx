@@ -278,8 +278,6 @@ function TableWithSearch({ onLogout = () => {} }) {
       maximumFractionDigits: 2,
     }).format(value || 0);
 
-    
-
   return (
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
       {/* Search */}
@@ -317,8 +315,14 @@ function TableWithSearch({ onLogout = () => {} }) {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="py-2 text-center">
+                <td colSpan="9" className="py-2 text-center">
                   Cargando...
+                </td>
+              </tr>
+            ) : invoices.length === 0 ? (
+              <tr>
+                <td colSpan="9" className="py-4 text-center text-gray-500">
+                  No hay Facturas disponibles.
                 </td>
               </tr>
             ) : (
@@ -334,9 +338,15 @@ function TableWithSearch({ onLogout = () => {} }) {
                   <td className="py-2 text-center">
                     {row.payment_method.name}
                   </td>
-                  <td className="py-2 text-center">{formatCurrency(row.total)}</td>
-                  <td className="py-2 text-center">{formatCurrency(row.subtotal)}</td>
-                  <td className="py-2 text-center">{formatCurrency(row.discount)}</td>
+                  <td className="py-2 text-center">
+                    {formatCurrency(row.total)}
+                  </td>
+                  <td className="py-2 text-center">
+                    {formatCurrency(row.subtotal)}
+                  </td>
+                  <td className="py-2 text-center">
+                    {formatCurrency(row.discount)}
+                  </td>
                   <td className="py-2 text-center">
                     <button>
                       <img

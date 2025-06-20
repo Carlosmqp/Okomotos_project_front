@@ -23,6 +23,7 @@ function TableClient({ onLogout = () => {} }) {
   const [loading, setLoading] = useState(true);
   const [showModalTopRight, setShowModalTopRight] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   const fetchClients = async (token) => {
     try {
@@ -114,6 +115,8 @@ function TableClient({ onLogout = () => {} }) {
     try {
       const token = localStorage.getItem("token");
 
+      setLoadingScreen(true);
+
       const response = await fetch(
         `${API_BASE_URL}/clients/update/${selectedClient.id}`,
         {
@@ -144,6 +147,8 @@ function TableClient({ onLogout = () => {} }) {
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
@@ -214,6 +219,7 @@ function TableClient({ onLogout = () => {} }) {
       console.error("No token found");
       return;
     }
+    setLoadingScreen(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/clients/delete/${id}`, {
@@ -241,11 +247,27 @@ function TableClient({ onLogout = () => {} }) {
       }
     } catch (error) {
       toast.error("Ocurrió un error al intentar eliminar el cliente.");
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
+
       {/* Search */}
       <div className="flex w-full mb-4 justify-between">
         <input
@@ -287,6 +309,12 @@ function TableClient({ onLogout = () => {} }) {
               <tr>
                 <td colSpan="7" className="py-2 text-center">
                   Cargando...
+                </td>
+              </tr>
+            ) : clients.length === 0 ? (
+              <tr>
+                <td colSpan="7" className="py-4 text-center text-gray-500">
+                  No hay clientes disponibles.
                 </td>
               </tr>
             ) : (

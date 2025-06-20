@@ -102,8 +102,14 @@ function TableSamples({ onLogout = () => {} }) {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="py-2 text-center">
+                <td colSpan="5" className="py-2 text-center">
                   Cargando...
+                </td>
+              </tr>
+            ) : samples.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="py-4 text-center text-gray-500">
+                  No hay Muestras disponibles.
                 </td>
               </tr>
             ) : (
@@ -117,7 +123,9 @@ function TableSamples({ onLogout = () => {} }) {
                   <td className="py-2 text-center">
                     {row.category.type ?? "Sin nombre"}
                   </td>
-                  <td className="py-2 text-center">{formatNumber(row.stock)}</td>
+                  <td className="py-2 text-center">
+                    {formatNumber(row.stock)}
+                  </td>
                   <td className="py-2 text-center">
                     {row.employee
                       ? `${row.employee.first_name} ${row.employee.last_name}`

@@ -21,6 +21,7 @@ function TableEmployee({ onLogout = () => {} }) {
   const [employee, setEmployee] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   const fetchEmployees = async (token) => {
     try {
@@ -87,6 +88,7 @@ function TableEmployee({ onLogout = () => {} }) {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
+      setLoadingScreen(true);
 
       const response = await fetch(
         `${API_BASE_URL}/employees/update/${selectedEmployee.id}`,
@@ -118,6 +120,8 @@ function TableEmployee({ onLogout = () => {} }) {
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
@@ -189,6 +193,8 @@ function TableEmployee({ onLogout = () => {} }) {
       return;
     }
 
+    setLoadingScreen(true);
+
     try {
       const response = await fetch(`${API_BASE_URL}/employees/delete/${id}`, {
         method: "DELETE",
@@ -215,11 +221,26 @@ function TableEmployee({ onLogout = () => {} }) {
       }
     } catch (error) {
       toast.error("¡Hubo un error al intentar eliminar el empleado.!");
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
       {/* Search */}
       <div className="flex w-full mb-4 justify-between">
         <input
@@ -258,8 +279,14 @@ function TableEmployee({ onLogout = () => {} }) {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="py-2 text-center">
+                <td colSpan="6" className="py-2 text-center">
                   Cargando...
+                </td>
+              </tr>
+            ) : employee.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="py-4 text-center text-gray-500">
+                  No hay empleados disponibles.
                 </td>
               </tr>
             ) : (

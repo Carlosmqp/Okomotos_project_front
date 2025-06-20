@@ -17,6 +17,7 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
   const [perPage] = useState(10);
   const [inventories, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -29,6 +30,7 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
     const fetchMovements = async () => {
       try {
         let url = "";
+        setLoadingScreen(true);
         if (selectedReport === "1") {
           url += `${API_BASE_URL}/inventory/reporte_inventario?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
         } else if (selectedReport === "2") {
@@ -40,6 +42,8 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
         } else if (selectedReport === "4") {
           url += `${API_BASE_URL}/movements?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
           url += "&movement_type=Muestra";
+        }else{
+          setLoadingScreen(false);
         }
 
         const response = await fetch(url, {
@@ -52,9 +56,6 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
 
         if (response.ok) {
           const data = await response.json();
-
-          // console.log(data.data);
-
           setInventory(data.data);
           setTotalPages(data.last_page);
         } else if (
@@ -72,6 +73,7 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
         console.error("Error:", error);
       } finally {
         setLoading(false);
+        setLoadingScreen(false);
       }
     };
 
@@ -351,9 +353,22 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value || 0);
-
   return (
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
+
       {/* Search */}
       <div className="flex w-full mb-4 justify-between">
         <input
@@ -512,7 +527,7 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
       {/* Table */}
 
       {/* Paginator */}
-      {inventories.length > 0 ? (
+      {inventories.length > 0 && selectedReport ? (
         <div className="flex justify-end w-full">
           <Pagination
             totalPages={totalPages}

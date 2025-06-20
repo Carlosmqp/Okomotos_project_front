@@ -19,6 +19,7 @@ function Tax({ onLogout = () => {} }) {
   const [percentage, setPercentage] = useState("");
   const [status, setStatus] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   const resetForm = () => {
     setPercentage("");
@@ -32,6 +33,8 @@ function Tax({ onLogout = () => {} }) {
       console.error("No token found");
       return;
     }
+
+    setLoadingScreen(true);
 
     const taxData = {
       name: name,
@@ -51,7 +54,7 @@ function Tax({ onLogout = () => {} }) {
 
       if (response.ok) {
         await response.json();
-        
+
         toast.success("¡Impuesto creado con exito!");
         resetForm();
         setShowModalTopRight(false);
@@ -81,6 +84,8 @@ function Tax({ onLogout = () => {} }) {
       }
     } catch (error) {
       toast.error("¡Error de servidor!");
+    }finally{
+      setLoadingScreen(false);
     }
   };
 
@@ -95,6 +100,19 @@ function Tax({ onLogout = () => {} }) {
 
   return (
     <div className="w-full px-3">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
       <div className="-mt-[72px] w-full text-2xl mx-3 text-neutral-100 flex font-semibold italic text-shadow">
         <h1 className="first-letter:text-4xl first-letter:font-bold first-letter:text-lime-100">
           Creación &nbsp;

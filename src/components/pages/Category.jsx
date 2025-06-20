@@ -18,6 +18,7 @@ function Category({ onLogout = () => {} }) {
   const [showModalTopRight, setShowModalTopRight] = useState(false);
   const [type, setType] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   const resetForm = () => {
     setType("");
@@ -31,11 +32,12 @@ function Category({ onLogout = () => {} }) {
       return;
     }
 
+    setLoadingScreen(true);
+
     const categoryData = {
       type: type,
     };
 
-    // console.log(type);
     try {
       const response = await fetch(`${API_BASE_URL}/categories/create`, {
         method: "POST",
@@ -62,7 +64,7 @@ function Category({ onLogout = () => {} }) {
       } else {
         const error = await response.json();
         console.log(error.fields.type[0]);
-        if (error.fields.type[0] === "The type has already been taken.") {
+        if (error.fields.type[0] === "El tipo ya ha sido tomado.") {
           toast.error("!La categoria digitiada ya Existe, porfavor verificar!");
         } else if (error.fields) {
           const [firstKey] = Object.entries(error.fields)[0];
@@ -78,6 +80,8 @@ function Category({ onLogout = () => {} }) {
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLoadingScreen(false);
     }
   };
 
@@ -88,6 +92,19 @@ function Category({ onLogout = () => {} }) {
 
   return (
     <div className="w-full px-3">
+      {/* Modal de Carga */}
+      {loadingScreen && (
+        <div
+          className="fixed inset-0 bg-lime-800/50 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-4 h-4 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+      )}
       <div className="-mt-[72px] w-full text-2xl mx-3 text-neutral-100 flex font-semibold italic text-shadow">
         <h1 className="first-letter:text-4xl first-letter:font-bold first-letter:text-lime-100">
           Creación &nbsp;
