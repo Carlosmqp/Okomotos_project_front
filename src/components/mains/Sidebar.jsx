@@ -42,73 +42,75 @@ function Sidebar({ isOpen, toggleSidebar, onLogout }) {
 
           <nav>
             <div className="mt-10 px-8">
-              <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                <button>
-                  <img
-                    src="/images/icons/home.png"
-                    className="h-6 mr-4 box-shadow-image"
-                    alt="Logo"
-                  />
-                </button>
-                <Link
-                  to="/"
-                  onClick={(e) => {
-                    handleVerifyToken(e);
-                  }}
-                >
+              <Link
+                to="/"
+                onClick={(e) => {
+                  handleVerifyToken(e);
+                }}
+              >
+                <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                  <button>
+                    <img
+                      src="/images/icons/home.png"
+                      className="h-6 mr-4 box-shadow-image"
+                      alt="Logo"
+                    />
+                  </button>
                   Inicio
-                </Link>
-              </div>
+                </div>
+              </Link>
               <br />
 
-              <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                <button>
-                  <img
-                    src="/images/icons/report.png"
-                    className="h-7 mr-4 box-shadow-image"
-                    alt="Logo"
-                  />
-                </button>
-                <Link
-                  to="/reports"
-                  onClick={(e) => {
-                    handleVerifyToken(e);
-                  }}
-                >
+              <Link
+                to="/reports"
+                onClick={(e) => {
+                  handleVerifyToken(e);
+                }}
+              >
+                <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                  <button>
+                    <img
+                      src="/images/icons/report.png"
+                      className="h-7 mr-4 box-shadow-image"
+                      alt="Logo"
+                    />
+                  </button>
                   Reportes
-                </Link>
-              </div>
+                </div>
+              </Link>
               <br />
 
-              <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                <button>
-                  <img
-                    src="/images/icons/user.png"
-                    className="h-7 mr-4 box-shadow-image"
-                    alt="Logo"
-                  />
-                </button>
-                <Link
-                  to="/client"
-                  onClick={(e) => {
-                    handleVerifyToken(e);
-                  }}
-                >
+              <Link
+                to="/client"
+                onClick={(e) => {
+                  handleVerifyToken(e);
+                }}
+              >
+                <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                  <button>
+                    <img
+                      src="/images/icons/user.png"
+                      className="h-7 mr-4 box-shadow-image"
+                      alt="Logo"
+                    />
+                  </button>
                   Clientes
-                </Link>
-              </div>
+                </div>
+              </Link>
               <br />
 
-              <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                <button>
-                  <img
-                    src="/images/icons/client.png"
-                    className="h-7 mr-4 box-shadow-image"
-                    alt="Logo"
-                  />
-                </button>
-                <Link to="/employee">Empleados</Link>
-              </div>
+              <Link to="/employee">
+                <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                  <button>
+                    <img
+                      src="/images/icons/client.png"
+                      className="h-7 mr-4 box-shadow-image"
+                      alt="Logo"
+                    />
+                  </button>
+                  Empleados
+                </div>
+              </Link>
               <br />
 
               <div className="relative group">
@@ -126,44 +128,44 @@ function Sidebar({ isOpen, toggleSidebar, onLogout }) {
                 <div className=" left-0 ml-4 hidden group-hover:block border-l-2 border-lime-800 mt-2">
                   <ul className="py-2">
                     <li>
-                      <div className="flex items-center w-52 ml-2 hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                        <button>
-                          <img
-                            src="/images/icons/category.png"
-                            className="h-7 mr-4 box-shadow-image"
-                            alt="Logo"
-                          />
-                        </button>
-                        <Link
-                          to="/category"
-                          className="block py-2 text-lime-800 rounded-md"
-                          onClick={(e) => {
-                            handleVerifyToken(e);
-                          }}
-                        >
+                      <Link
+                        to="/category"
+                        className="block py-2 text-lime-800 rounded-md"
+                        onClick={(e) => {
+                          handleVerifyToken(e);
+                        }}
+                      >
+                        <div className="flex items-center w-52 ml-2 hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                          <button>
+                            <img
+                              src="/images/icons/category.png"
+                              className="h-7 mr-4 box-shadow-image"
+                              alt="Logo"
+                            />
+                          </button>
                           Categorias
-                        </Link>
-                      </div>
+                        </div>
+                      </Link>
                     </li>
                     <li>
-                      <div className="flex items-center w-52 ml-2 hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                        <button>
-                          <img
-                            src="/images/icons/taxes.png"
-                            className="h-7 mr-4 box-shadow-image"
-                            alt="Logo"
-                          />
-                        </button>
-                        <Link
-                          to="/tax"
-                          className="block py-2 text-lime-800 rounded-md"
-                          onClick={(e) => {
-                            handleVerifyToken(e);
-                          }}
-                        >
+                      <Link
+                        to="/tax"
+                        className="block py-2 text-lime-800 rounded-md"
+                        onClick={(e) => {
+                          handleVerifyToken(e);
+                        }}
+                      >
+                        <div className="flex items-center w-52 ml-2 hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                          <button>
+                            <img
+                              src="/images/icons/taxes.png"
+                              className="h-7 mr-4 box-shadow-image"
+                              alt="Logo"
+                            />
+                          </button>
                           Impuestos
-                        </Link>
-                      </div>
+                        </div>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -184,44 +186,44 @@ function Sidebar({ isOpen, toggleSidebar, onLogout }) {
                 <div className=" left-0 ml-4 hidden group-hover:block border-l-2 border-lime-800 mt-2">
                   <ul className="py-2">
                     <li>
-                      <div className="flex items-center w-52 ml-2 hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                        <button>
-                          <img
-                            src="/images/icons/inventary2.png"
-                            className="h-7 mr-4 box-shadow-image"
-                            alt="Logo"
-                          />
-                        </button>
-                        <Link
-                          to="/inventarygeneral"
-                          className="block py-2 text-lime-800 rounded-md"
-                          onClick={(e) => {
-                            handleVerifyToken(e);
-                          }}
-                        >
+                      <Link
+                        to="/inventarygeneral"
+                        className="block py-2 text-lime-800 rounded-md"
+                        onClick={(e) => {
+                          handleVerifyToken(e);
+                        }}
+                      >
+                        <div className="flex items-center w-52 ml-2 hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                          <button>
+                            <img
+                              src="/images/icons/inventary2.png"
+                              className="h-7 mr-4 box-shadow-image"
+                              alt="Logo"
+                            />
+                          </button>
                           General
-                        </Link>
-                      </div>
+                        </div>
+                      </Link>
                     </li>
                     <li>
-                      <div className="flex items-center w-52 ml-2 hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                        <button>
-                          <img
-                            src="/images/icons/inventary3.png"
-                            className="h-7 mr-4 box-shadow-image"
-                            alt="Logo"
-                          />
-                        </button>
-                        <Link
-                          to="/inventarysamples"
-                          className="block py-2 text-lime-800 rounded-md"
-                          onClick={(e) => {
-                            handleVerifyToken(e);
-                          }}
-                        >
+                      <Link
+                        to="/inventarysamples"
+                        className="block py-2 text-lime-800 rounded-md"
+                        onClick={(e) => {
+                          handleVerifyToken(e);
+                        }}
+                      >
+                        <div className="flex items-center w-52 ml-2 hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                          <button>
+                            <img
+                              src="/images/icons/inventary3.png"
+                              className="h-7 mr-4 box-shadow-image"
+                              alt="Logo"
+                            />
+                          </button>
                           Muestras
-                        </Link>
-                      </div>
+                        </div>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -229,42 +231,42 @@ function Sidebar({ isOpen, toggleSidebar, onLogout }) {
 
               <br />
 
-              <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                <button>
-                  <img
-                    src="/images/icons/taxing.png"
-                    className="h-7 mr-4 box-shadow-image"
-                    alt="Logo"
-                  />
-                </button>
-                <Link
-                  to="/bill"
-                  onClick={(e) => {
-                    handleVerifyToken(e);
-                  }}
-                >
+              <Link
+                to="/bill"
+                onClick={(e) => {
+                  handleVerifyToken(e);
+                }}
+              >
+                <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                  <button>
+                    <img
+                      src="/images/icons/taxing.png"
+                      className="h-7 mr-4 box-shadow-image"
+                      alt="Logo"
+                    />
+                  </button>
                   Facturación
-                </Link>
-              </div>
+                </div>
+              </Link>
               <br />
 
-              <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
-                <button>
-                  <img
-                    src="/images/icons/sail.png"
-                    className="h-7 mr-4 box-shadow-image"
-                    alt="Logo"
-                  />
-                </button>
-                <Link
-                  to="/sales"
-                  onClick={(e) => {
-                    handleVerifyToken(e);
-                  }}
-                >
+              <Link
+                to="/sales"
+                onClick={(e) => {
+                  handleVerifyToken(e);
+                }}
+              >
+                <div className="flex items-center hover:bg-slate-600/25 hover:text-lime-800 h-10 rounded-md font-semibold text-lime-800 pl-2">
+                  <button>
+                    <img
+                      src="/images/icons/sail.png"
+                      className="h-7 mr-4 box-shadow-image"
+                      alt="Logo"
+                    />
+                  </button>
                   Ventas
-                </Link>
-              </div>
+                </div>
+              </Link>
               <br />
             </div>
             <div className="px-2">

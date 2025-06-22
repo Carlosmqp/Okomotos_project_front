@@ -109,26 +109,6 @@ function InventaryGeneral({ onLogout = () => {} }) {
     };
 
     try {
-      const productResponse = await fetch(`${API_BASE_URL}/products/create`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(productData),
-      });
-
-      if (!productResponse.ok) {
-        const error = await productResponse.json();
-        if (error.fields) {
-          const [firstKey] = Object.entries(error.fields)[0];
-          toast.error(
-            `¡Error en producto: ${getFieldName(firstKey)} es requerido!`
-          );
-        }
-        return;
-      }
-
       const response = await fetch(`${API_BASE_URL}/inventory/create`, {
         method: "POST",
         headers: {
@@ -139,8 +119,16 @@ function InventaryGeneral({ onLogout = () => {} }) {
       });
 
       if (response.ok) {
-        await response.json();
+        await fetch(`${API_BASE_URL}/products/create`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(productData),
+        });
 
+        await response.json();
         const responseMovements = await fetch(
           `${API_BASE_URL}/movements/create`,
           {
@@ -169,6 +157,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
       function getFieldName(field) {
         const fieldNames = {
           code: "Codigo",
+          name: "nombre",
           item: "Item",
           category_id: "Categoria",
           stock: "Stock",
@@ -180,7 +169,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
       }
     } catch (error) {
       toast.error("¡Error de servidor!");
-    }finally{
+    } finally {
       setLoadingScreen(false);
     }
   };
@@ -224,7 +213,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
     } catch (error) {
       console.error("Error:", error);
       toast.error("Error al descargar la plantilla");
-    }finally{
+    } finally {
       setLoadingScreen(false);
     }
   };
@@ -279,7 +268,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
     } catch (error) {
       console.error("Error:", error);
       toast.error(error.message || "Error al procesar el archivo");
-    }finally{
+    } finally {
       setLoadingScreen(false);
     }
   };
@@ -380,7 +369,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
                 </button>
               </TEModalHeader>
               {/* <!--Modal body--> */}
-              <TEModalBody>
+              <TEModalBody className="bg-white">
                 <div className="flex py-3">
                   <input
                     type="text"
@@ -454,7 +443,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
                   />
                 </div>
               </TEModalBody>
-              <TEModalFooter>
+              <TEModalFooter className="bg-white">
                 <TERipple rippleColor="light">
                   <button
                     type="button"
@@ -484,7 +473,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
         <TEModal show={showModal} setShow={setShowModal}>
           <TEModalDialog>
             <TEModalContent>
-              <TEModalHeader>
+              <TEModalHeader className="bg-lime-700/75 text-white">
                 {/* <!--Modal title--> */}
                 <h5 className="text-xl font-medium leading-normal text-lime-800/90 dark:text-neutral-200">
                   Cargar Archivo Excel
@@ -513,7 +502,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
                 </button>
               </TEModalHeader>
               {/* <!--Modal body--> */}
-              <TEModalBody>
+              <TEModalBody className="bg-white">
                 <div className="flex justify-center items-center">
                   <label
                     htmlFor="file-upload"

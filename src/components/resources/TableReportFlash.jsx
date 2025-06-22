@@ -191,15 +191,14 @@ function TableReportFlash({ report, onLogout = () => {} }) {
   const config = reportConfig[report] || { columns: [] };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
+    <div className="flex flex-col items-center justify-center content-center justify-items-center w-full h-full space-y-4">
       {loading ? (
-        <div>Cargando...</div>
+        <div className="flex items-center justify-center w-full h-64 text-lg text-center">Cargando...</div>
       ) : filteredData.length === 0 ? (
-        <div className="text-gray-500 text-lg py-8 text-center w-full">
+        <div className="flex items-center justify-center w-full h-64 text-gray-500 text-lg text-center">
           No hay información disponible.
         </div>
       ) : (
-        <div className="w-full overflow-x-auto">
           <table className="table-auto w-full border-collapse rounded-md overflow-hidden shadow-md">
             <thead className="text-black">
               <tr>
@@ -233,7 +232,6 @@ function TableReportFlash({ report, onLogout = () => {} }) {
               ))}
             </tbody>
           </table>
-        </div>
       )}
     </div>
   );

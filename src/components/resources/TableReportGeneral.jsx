@@ -19,6 +19,57 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
   const [loading, setLoading] = useState(true);
   const [loadingScreen, setLoadingScreen] = useState(false);
 
+  const fetchMovements = async (token) => {
+    try {
+      let url = "";
+      setLoadingScreen(true);
+      if (selectedReport === "1") {
+        url += `${API_BASE_URL}/inventory/reporte_inventario?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
+      } else if (selectedReport === "2") {
+        url += `${API_BASE_URL}/movements?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
+        url += "&movement_type=Salida";
+      } else if (selectedReport === "3") {
+        url += `${API_BASE_URL}/movements?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
+        url += "&movement_type=Entrada";
+      } else if (selectedReport === "4") {
+        url += `${API_BASE_URL}/movements?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
+        url += "&movement_type=Muestra";
+      }else{
+        setLoadingScreen(false);
+        return;
+      }
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setInventory(data.data);
+        setTotalPages(data.last_page);
+      } else if (
+        !response.ok &&
+        response.redirected &&
+        response.url.includes("login_failed")
+      ) {
+        onLogout();
+      } else {
+        console.error(`Failed to fetch movements: ${response.status}`);
+        const errorData = await response.json();
+        console.error("Error details:", errorData);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+      setLoadingScreen(false);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -27,58 +78,8 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
       return;
     }
 
-    const fetchMovements = async () => {
-      try {
-        let url = "";
-        setLoadingScreen(true);
-        if (selectedReport === "1") {
-          url += `${API_BASE_URL}/inventory/reporte_inventario?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
-        } else if (selectedReport === "2") {
-          url += `${API_BASE_URL}/movements?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
-          url += "&movement_type=Salida";
-        } else if (selectedReport === "3") {
-          url += `${API_BASE_URL}/movements?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
-          url += "&movement_type=Entrada";
-        } else if (selectedReport === "4") {
-          url += `${API_BASE_URL}/movements?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
-          url += "&movement_type=Muestra";
-        }else{
-          setLoadingScreen(false);
-        }
-
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setInventory(data.data);
-          setTotalPages(data.last_page);
-        } else if (
-          !response.ok &&
-          response.redirected &&
-          response.url.includes("login_failed")
-        ) {
-          onLogout();
-        } else {
-          console.error(`Failed to fetch movements: ${response.status}`);
-          const errorData = await response.json();
-          console.error("Error details:", errorData);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
-        setLoadingScreen(false);
-      }
-    };
-
     const delayDebounceFn = setTimeout(() => {
-      fetchMovements();
+      fetchMovements(token);
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
@@ -146,6 +147,7 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
 
       if (!allData || allData.length === 0) {
         console.error("No hay datos para exportar");
+        toast.error("No hay datos para exportar");
         return;
       }
 
@@ -272,6 +274,7 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
 
       if (!allData || allData.length === 0) {
         console.error("No hay datos para exportar");
+        toast.error("No hay datos para exportar");
         return;
       }
 

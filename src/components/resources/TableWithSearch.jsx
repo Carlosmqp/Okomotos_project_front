@@ -291,89 +291,85 @@ function TableWithSearch({ onLogout = () => {} }) {
         />
       </div>
 
-      <div className="w-full overflow-x-auto">
-        <table className="table-auto w-[1610px] min-w-[600px]  border-collapse rounded-md overflow-hidden shadow-md">
-          <thead className="bg-lime-700/15 text-lime-900">
+      <table className="table-auto w-[1610px] min-w-[600px]  border-collapse rounded-md overflow-hidden shadow-md">
+        <thead className="bg-lime-700/15 text-lime-900">
+          <tr>
+            <th className="px-5 py-2 text-center">Código</th>
+            <th className="px-16 py-2 text-center">Fecha</th>
+            <th className="px-16 py-2 text-center">Tipo Pago</th>
+            <th className="px-16 py-2 text-center">Total</th>
+            <th className="px-10 py-2 text-center">Sub-total</th>
+            <th className="px-10 py-2 text-center">Descuento</th>
+            <th className="px-16 py-2 text-center">PDF</th>
+            <th className="px-10 py-2 text-center">Estado</th>
+            <th className="px-10 py-2 text-center">
+              <img
+                src="/images/icons/cancel.png"
+                alt="Editar"
+                className="inline h-9 w-9"
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
             <tr>
-              <th className="px-5 py-2 text-center">Código</th>
-              <th className="px-16 py-2 text-center">Fecha</th>
-              <th className="px-16 py-2 text-center">Tipo Pago</th>
-              <th className="px-16 py-2 text-center">Total</th>
-              <th className="px-10 py-2 text-center">Sub-total</th>
-              <th className="px-10 py-2 text-center">Descuento</th>
-              <th className="px-16 py-2 text-center">PDF</th>
-              <th className="px-10 py-2 text-center">Estado</th>
-              <th className="px-10 py-2 text-center">
-                <img
-                  src="/images/icons/cancel.png"
-                  alt="Editar"
-                  className="inline h-9 w-9"
-                />
-              </th>
+              <td colSpan="9" className="py-2 text-center">
+                Cargando...
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="9" className="py-2 text-center">
-                  Cargando...
+          ) : invoices.length === 0 ? (
+            <tr>
+              <td colSpan="9" className="py-4 text-center text-gray-500">
+                No hay Facturas disponibles.
+              </td>
+            </tr>
+          ) : (
+            invoices.map((row) => (
+              <tr
+                key={row.id}
+                className="even:border-lime-800/55 odd:border-lime-800/55 border-b-2 hover:bg-lime-200/55"
+              >
+                <td className="py-2 text-center">{"FAC" + row.id}</td>
+                <td className="py-2 text-center">
+                  {moment(row.created_at).format("DD/MM/YYYY HH:mm:ss")}
                 </td>
-              </tr>
-            ) : invoices.length === 0 ? (
-              <tr>
-                <td colSpan="9" className="py-4 text-center text-gray-500">
-                  No hay Facturas disponibles.
+                <td className="py-2 text-center">{row.payment_method.name}</td>
+                <td className="py-2 text-center">
+                  {formatCurrency(row.total)}
                 </td>
-              </tr>
-            ) : (
-              invoices.map((row) => (
-                <tr
-                  key={row.id}
-                  className="even:border-lime-800/55 odd:border-lime-800/55 border-b-2 hover:bg-lime-200/55"
-                >
-                  <td className="py-2 text-center">{"FAC" + row.id}</td>
-                  <td className="py-2 text-center">
-                    {moment(row.created_at).format("DD/MM/YYYY HH:mm:ss")}
-                  </td>
-                  <td className="py-2 text-center">
-                    {row.payment_method.name}
-                  </td>
-                  <td className="py-2 text-center">
-                    {formatCurrency(row.total)}
-                  </td>
-                  <td className="py-2 text-center">
-                    {formatCurrency(row.subtotal)}
-                  </td>
-                  <td className="py-2 text-center">
-                    {formatCurrency(row.discount)}
-                  </td>
-                  <td className="py-2 text-center">
-                    <button>
-                      <img
-                        src="/images/icons/pdf.png"
-                        alt="PDF"
-                        className="inline h-7"
-                        onClick={() => handleGeneratePdf(row.id)}
-                      />
-                    </button>
-                  </td>
-                  <td className="py-2 text-center">
-                    {row.status ? "Cancelada" : "Generada"}
-                  </td>
-                  <td className="py-2 text-center">
-                    <input
-                      type="checkbox"
-                      className="w-full max-w-lg h-8 px-4 rounded-md border-2 border-lime-800 outline-none"
-                      checked={row.status}
-                      onChange={() => handleCheckboxChange(row.id, row.status)}
+                <td className="py-2 text-center">
+                  {formatCurrency(row.subtotal)}
+                </td>
+                <td className="py-2 text-center">
+                  {formatCurrency(row.discount)}
+                </td>
+                <td className="py-2 text-center">
+                  <button>
+                    <img
+                      src="/images/icons/pdf.png"
+                      alt="PDF"
+                      className="inline h-7"
+                      onClick={() => handleGeneratePdf(row.id)}
                     />
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+                  </button>
+                </td>
+                <td className="py-2 text-center">
+                  {row.status ? "Cancelada" : "Generada"}
+                </td>
+                <td className="py-2 text-center">
+                  <input
+                    type="checkbox"
+                    className="w-full max-w-lg h-8 px-4 rounded-md border-2 border-lime-800 outline-none"
+                    checked={row.status}
+                    onChange={() => handleCheckboxChange(row.id, row.status)}
+                  />
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
 
       {/* Paginator */}
       {invoices.length > 0 ? (

@@ -32,6 +32,7 @@ function TableReport({ onLogout = () => {} }) {
   const [selectedInventary, setSelectedInventary] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
   const [quantity, setQuantity] = useState("");
+  const [originalQuantity, setOriginalQuantity] = useState("");
   const [newCode, setNewCode] = useState("");
   const [selectAll, setSelectAll] = useState(false);
   const [categorySelect, setCategorySelect] = useState([]);
@@ -199,6 +200,7 @@ function TableReport({ onLogout = () => {} }) {
 
       if (!allData || allData.length === 0) {
         console.error("No hay datos para exportar");
+        toast.error("No hay datos para exportar");
         return;
       }
 
@@ -270,6 +272,7 @@ function TableReport({ onLogout = () => {} }) {
 
       if (!allData || allData.length === 0) {
         console.error("No hay datos para exportar");
+        toast.error("No hay datos para exportar");
         return;
       }
 
@@ -330,31 +333,6 @@ function TableReport({ onLogout = () => {} }) {
     setLoadingScreen(true);
 
     try {
-      const productData = {
-        name: selectedInventary.item,
-        category_id: selectedInventary.category_id,
-      };
-
-      
-      const productResponse = await fetch(
-        `${API_BASE_URL}/products/update/${selectedInventary.code}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(productData),
-        }
-      );
-      console.log(productResponse);
-      
-      if (!productResponse.ok) {
-        const error = await productResponse.json();
-        toast.error("¡Error al actualizar el producto básico!");
-        return;
-      }
-
       const inventaryData = {
         item: selectedInventary.item,
         category_id: selectedInventary.category_id,
@@ -377,6 +355,30 @@ function TableReport({ onLogout = () => {} }) {
           body: JSON.stringify(inventaryData),
         }
       );
+
+      const productData = {
+        name: selectedInventary.item,
+        category_id: selectedInventary.category_id,
+      };
+
+      const productResponse = await fetch(
+        `${API_BASE_URL}/products/update/${selectedInventary.code}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(productData),
+        }
+      );
+      console.log(productResponse);
+
+      if (!productResponse.ok) {
+        const error = await productResponse.json();
+        toast.error("¡Error al actualizar el producto básico!");
+        return;
+      }
 
       const movementsData = {
         movement_type: "Entrada",
@@ -582,6 +584,7 @@ function TableReport({ onLogout = () => {} }) {
         if (existingSample) {
           setNewCode(existingSample.code);
           setQuantity(existingSample.stock);
+          setOriginalQuantity(existingSample.stock);
           setEmployee(existingSample.employee_id);
           setIsDisabled(true);
         }
@@ -673,10 +676,21 @@ function TableReport({ onLogout = () => {} }) {
       inventary_code_id: selectedRow.code,
     };
 
+    let original = parseFloat(originalQuantity);
+    let nuevo = parseFloat(quantity);
+
+    
+    if (isNaN(original)) {
+      original = 0;
+    }
+
+    const movimiento = nuevo - original;
+
+
     const movementsData = {
       movement_type: "Muestra",
       product_id: selectedRow.id,
-      quantity: quantity,
+      quantity: movimiento,
       description: "Entrada por inventario muestras",
     };
 
@@ -1144,7 +1158,7 @@ function TableReport({ onLogout = () => {} }) {
                 </button>
               </TEModalHeader>
               {/* <!--Modal body--> */}
-              <TEModalBody>
+              <TEModalBody className="bg-white">
                 <div className="flex py-3">
                   <input
                     type="text"
@@ -1265,7 +1279,7 @@ function TableReport({ onLogout = () => {} }) {
                   />
                 </div>
               </TEModalBody>
-              <TEModalFooter>
+              <TEModalFooter className="bg-white">
                 <TERipple rippleColor="light">
                   <button
                     type="button"
@@ -1324,7 +1338,7 @@ function TableReport({ onLogout = () => {} }) {
                 </button>
               </TEModalHeader>
               {/* <!--Modal body--> */}
-              <TEModalBody>
+              <TEModalBody className="bg-white">
                 <div className="flex justify-center items-center content-center">
                   <div>
                     <input
@@ -1378,7 +1392,7 @@ function TableReport({ onLogout = () => {} }) {
                   </div>
                 </div>
               </TEModalBody>
-              <TEModalFooter>
+              <TEModalFooter className="bg-white">
                 <TERipple rippleColor="light">
                   <button
                     type="button"
@@ -1437,7 +1451,7 @@ function TableReport({ onLogout = () => {} }) {
                 </button>
               </TEModalHeader>
               {/* <!--Modal body--> */}
-              <TEModalBody>
+              <TEModalBody className="bg-white">
                 <div className="flex justify-center items-center content-center">
                   <div>
                     <input
@@ -1461,7 +1475,7 @@ function TableReport({ onLogout = () => {} }) {
                   </div>
                 </div>
               </TEModalBody>
-              <TEModalFooter>
+              <TEModalFooter className="bg-white">
                 <TERipple rippleColor="light">
                   <button
                     type="button"

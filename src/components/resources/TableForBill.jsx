@@ -56,7 +56,7 @@ function TableForBill({
       const imgWidth = 210;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-      pdf.save("documento.pdf");
+      pdf.save(`FAC${nextInvoiceNumber}.pdf`);
     });
   };
 
@@ -484,7 +484,6 @@ function TableForBill({
         />
       </div>
 
-      <div className="w-full overflow-x-auto">
         <table className="table-auto w-[1610px] min-w-[600px]  border-collapse rounded-md overflow-hidden shadow-md">
           <thead className="bg-lime-700/15 text-lime-900">
             <tr>
@@ -615,7 +614,6 @@ function TableForBill({
             )}
           </tbody>
         </table>
-      </div>
 
       {/* Paginator */}
       {inventories.length > 0 ? (
@@ -854,7 +852,7 @@ function TableForBill({
                 </button>
               </TEModalHeader>
               {/* <!--Modal body--> */}
-              <TEModalBody>
+              <TEModalBody className="bg-white">
                 <div>
                   <div className="flex justify-between mb-5">
                     <div>
@@ -981,7 +979,7 @@ function TableForBill({
                   </div>
                 </div>
               </TEModalBody>
-              <TEModalFooter>
+              <TEModalFooter className="bg-white">
                 <TERipple rippleColor="light">
                   <button
                     type="button"

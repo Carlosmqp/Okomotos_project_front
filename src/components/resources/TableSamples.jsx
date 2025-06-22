@@ -88,7 +88,6 @@ function TableSamples({ onLogout = () => {} }) {
         />
       </div>
 
-      <div className="w-full overflow-x-auto">
         <table className="table-auto w-[1610px] min-w-[600px]  border-collapse rounded-md overflow-hidden shadow-md">
           <thead className="bg-lime-700/15 text-lime-900">
             <tr>
@@ -136,7 +135,6 @@ function TableSamples({ onLogout = () => {} }) {
             )}
           </tbody>
         </table>
-      </div>
 
       {/* Paginator */}
       {samples.length > 0 ? (

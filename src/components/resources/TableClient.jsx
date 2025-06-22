@@ -18,7 +18,7 @@ function TableClient({ onLogout = () => {} }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [perPage] = useState(10);
-  const [clients, setClients] = useState([]);
+  const [clients, setClients] = useState(null);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModalTopRight, setShowModalTopRight] = useState(false);
@@ -41,15 +41,14 @@ function TableClient({ onLogout = () => {} }) {
       if (response.ok) {
         const data = await response.json();
         setClients(data.data);
+        // console.log(data.data);
         setTotalPages(data.last_page);
-      } else {
-        if (
-          !response.ok &&
-          response.redirected &&
-          response.url.includes("login_failed")
-        ) {
-          onLogout();
-        }
+      } else if (
+        !response.ok &&
+        response.redirected &&
+        response.url.includes("login_failed")
+      ) {
+        onLogout();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -149,6 +148,7 @@ function TableClient({ onLogout = () => {} }) {
       console.error("Error:", error);
     } finally {
       setLoadingScreen(false);
+      setLoading(false);
     }
   };
 
@@ -279,87 +279,85 @@ function TableClient({ onLogout = () => {} }) {
         />
       </div>
 
-      <div className="w-full overflow-x-auto">
-        <table className="table-auto w-[1610px] min-w-[600px]  border-collapse rounded-md overflow-hidden shadow-md">
-          <thead className="bg-lime-700/15 text-lime-900">
+      <table className="table-auto w-[1610px] min-w-full border-collapse rounded-md overflow-hidden shadow-md">
+        <thead className="bg-lime-700/15 text-lime-900">
+          <tr>
+            <th className="px-5 py-2 text-center">Nombre</th>
+            <th className="px-16 py-2 text-center">Ciudad</th>
+            <th className="px-16 py-2 text-center">Identificación</th>
+            <th className="px-16 py-2 text-center">Telefono</th>
+            <th className="px-10 py-2 text-center">Dirección</th>
+            <th className="px-5 py-2 text-center">
+              <img
+                src="/images/icons/edit-black-2.png"
+                alt="Editar"
+                className="inline h-7"
+              />
+            </th>
+            <th className="px-5 py-2 text-center">
+              <img
+                src="/images/icons/trash-black.png"
+                alt="Eliminar"
+                className="inline h-8"
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
             <tr>
-              <th className="px-5 py-2 text-center">Nombre</th>
-              <th className="px-16 py-2 text-center">Ciudad</th>
-              <th className="px-16 py-2 text-center">Identificación</th>
-              <th className="px-16 py-2 text-center">Telefono</th>
-              <th className="px-10 py-2 text-center">Dirección</th>
-              <th className="px-5 py-2 text-center">
-                <img
-                  src="/images/icons/edit-black-2.png"
-                  alt="Editar"
-                  className="inline h-7"
-                />
-              </th>
-              <th className="px-5 py-2 text-center">
-                <img
-                  src="/images/icons/trash-black.png"
-                  alt="Eliminar"
-                  className="inline h-8"
-                />
-              </th>
+              <td colSpan="7" className="py-2 text-center">
+                Cargando...
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="7" className="py-2 text-center">
-                  Cargando...
+          ) : Array.isArray(clients) && clients.length === 0  ? (
+            <tr>
+              <td colSpan="7" className="py-4 text-center text-gray-500">
+                No hay clientes disponibles.
+              </td>
+            </tr>
+          ) : (
+            clients?.map((row) => (
+              <tr
+                key={row.id}
+                className="even:border-lime-800/55 odd:border-lime-800/55 border-b-2 hover:bg-lime-200/55"
+              >
+                <td className="py-2 text-center">
+                  {row.first_name} {row.last_name}
+                </td>
+                <td className="py-2 text-center">
+                  {row.city ? row.city.name : "Sin ciudad"}
+                </td>
+                <td className="py-2 text-center">{row.identification}</td>
+                <td className="py-2 text-center">{row.phone}</td>
+                <td className="py-2 text-center">{row.address}</td>
+                <td className="py-2 text-center">
+                  <button onClick={() => handleEditClick(row)}>
+                    <img
+                      src="/images/icons/edit.png"
+                      alt="Editar"
+                      className="inline h-7 box-shadow-image"
+                    />
+                  </button>
+                </td>
+                <td className="py-2 text-center">
+                  <button onClick={() => handleDelete(row.id)}>
+                    <img
+                      src="/images/icons/trash.png"
+                      alt="Eliminar"
+                      className="inline h-8 box-shadow-image"
+                    />
+                  </button>
                 </td>
               </tr>
-            ) : clients.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="py-4 text-center text-gray-500">
-                  No hay clientes disponibles.
-                </td>
-              </tr>
-            ) : (
-              clients.map((row) => (
-                <tr
-                  key={row.id}
-                  className="even:border-lime-800/55 odd:border-lime-800/55 border-b-2 hover:bg-lime-200/55"
-                >
-                  <td className="py-2 text-center">
-                    {row.first_name} {row.last_name}
-                  </td>
-                  <td className="py-2 text-center">
-                    {row.city ? row.city.name : "Sin ciudad"}
-                  </td>
-                  <td className="py-2 text-center">{row.identification}</td>
-                  <td className="py-2 text-center">{row.phone}</td>
-                  <td className="py-2 text-center">{row.address}</td>
-                  <td className="py-2 text-center">
-                    <button onClick={() => handleEditClick(row)}>
-                      <img
-                        src="/images/icons/edit.png"
-                        alt="Editar"
-                        className="inline h-7 box-shadow-image"
-                      />
-                    </button>
-                  </td>
-                  <td className="py-2 text-center">
-                    <button onClick={() => handleDelete(row.id)}>
-                      <img
-                        src="/images/icons/trash.png"
-                        alt="Eliminar"
-                        className="inline h-8 box-shadow-image"
-                      />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          )}
+        </tbody>
+      </table>
 
       {/* Paginator */}
 
-      {clients.length > 0 ? (
+      {Array.isArray(clients) && clients.length === 0 ? (
         <div className="flex justify-end w-full">
           <Pagination
             totalPages={totalPages}
@@ -408,7 +406,7 @@ function TableClient({ onLogout = () => {} }) {
                 </button>
               </TEModalHeader>
               {/* <!--Modal body--> */}
-              <TEModalBody>
+              <TEModalBody className="bg-white">
                 <div className="flex py-3">
                   <input
                     type="text"
@@ -506,7 +504,7 @@ function TableClient({ onLogout = () => {} }) {
                   />
                 </div>
               </TEModalBody>
-              <TEModalFooter>
+              <TEModalFooter className="bg-white">
                 <TERipple rippleColor="light">
                   <button
                     type="button"

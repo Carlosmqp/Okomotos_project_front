@@ -249,7 +249,6 @@ function TableCategory({ onLogout = () => {} }) {
         />
       </div>
 
-      <div className="w-full overflow-x-auto">
         <table className="table-auto w-[1610px] min-w-[600px]  border-collapse rounded-md overflow-hidden shadow-md">
           <thead className="bg-lime-700/15 text-lime-900">
             <tr>
@@ -315,7 +314,6 @@ function TableCategory({ onLogout = () => {} }) {
             )}
           </tbody>
         </table>
-      </div>
 
       {/* Paginator */}
       {categories.length > 0 ? (
@@ -367,7 +365,7 @@ function TableCategory({ onLogout = () => {} }) {
                 </button>
               </TEModalHeader>
               {/* <!--Modal body--> */}
-              <TEModalBody>
+              <TEModalBody className="bg-white">
                 <div className="flex py-3">
                   <input
                     type="text"
@@ -383,7 +381,7 @@ function TableCategory({ onLogout = () => {} }) {
                   />
                 </div>
               </TEModalBody>
-              <TEModalFooter>
+              <TEModalFooter className="bg-white">
                 <TERipple rippleColor="light">
                   <button
                     type="button"

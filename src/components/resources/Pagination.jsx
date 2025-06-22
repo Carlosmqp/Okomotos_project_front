@@ -2,7 +2,6 @@ import React from "react";
 
 function Pagination({ totalPages, currentPage, onPageChange }) {
 
-  // console.log(totalPages);
   const renderPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 2;

@@ -255,79 +255,77 @@ function TableTax({ onLogout = () => {} }) {
         />
       </div>
 
-      <div className="w-full overflow-x-auto">
-        <table className="table-auto w-[1610px] min-w-[600px]  border-collapse rounded-md overflow-hidden shadow-md">
-          <thead className="bg-lime-700/15 text-lime-900">
+      <table className="table-auto w-[1610px] min-w-[600px]  border-collapse rounded-md overflow-hidden shadow-md">
+        <thead className="bg-lime-700/15 text-lime-900">
+          <tr>
+            <th className="px-5 py-2 text-center">Id</th>
+            <th className="px-16 py-2 text-center">Nombre</th>
+            <th className="px-16 py-2 text-center">Porcentaje</th>
+            <th className="px-16 py-2 text-center">Estado</th>
+            <th className="px-5 py-2 text-center">
+              <img
+                src="/images/icons/edit-black-2.png"
+                alt="Editar"
+                className="inline h-7"
+              />
+            </th>
+            <th className="px-5 py-2 text-center">
+              <img
+                src="/images/icons/trash-black.png"
+                alt="Eliminar"
+                className="inline h-8"
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
             <tr>
-              <th className="px-5 py-2 text-center">Id</th>
-              <th className="px-16 py-2 text-center">Nombre</th>
-              <th className="px-16 py-2 text-center">Porcentaje</th>
-              <th className="px-16 py-2 text-center">Estado</th>
-              <th className="px-5 py-2 text-center">
-                <img
-                  src="/images/icons/edit-black-2.png"
-                  alt="Editar"
-                  className="inline h-7"
-                />
-              </th>
-              <th className="px-5 py-2 text-center">
-                <img
-                  src="/images/icons/trash-black.png"
-                  alt="Eliminar"
-                  className="inline h-8"
-                />
-              </th>
+              <td colSpan="6" className="py-2 text-center">
+                Cargando...
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="6" className="py-2 text-center">
-                  Cargando...
+          ) : tax.length === 0 ? (
+            <tr>
+              <td colSpan="6" className="py-4 text-center text-gray-500">
+                No hay Impuestos disponibles.
+              </td>
+            </tr>
+          ) : (
+            tax.map((row) => (
+              <tr
+                key={row.id}
+                className="even:border-lime-800/55 odd:border-lime-800/55 border-b-2 hover:bg-lime-200/55"
+              >
+                <td className="py-2 text-center">{row.id}</td>
+                <td className="py-2 text-center">{row.name}</td>
+                <td className="py-2 text-center">{row.percentage}%</td>
+                <td className="py-2 text-center">
+                  {row.status === true ? "Activo" : "Inactivo"}
+                </td>
+                <td className="py-2 text-center">
+                  <button onClick={() => handleEditClick(row)}>
+                    <img
+                      src="/images/icons/edit.png"
+                      alt="Editar"
+                      className="inline h-7 box-shadow-image"
+                    />
+                  </button>
+                </td>
+                <td className="py-2 text-center">
+                  <button onClick={() => handleDelete(row.id)}>
+                    <img
+                      src="/images/icons/trash.png"
+                      alt="Eliminar"
+                      className="inline h-8 box-shadow-image"
+                    />
+                  </button>
                 </td>
               </tr>
-            ) : tax.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="py-4 text-center text-gray-500">
-                  No hay Impuestos disponibles.
-                </td>
-              </tr>
-            ) : (
-              tax.map((row) => (
-                <tr
-                  key={row.id}
-                  className="even:border-lime-800/55 odd:border-lime-800/55 border-b-2 hover:bg-lime-200/55"
-                >
-                  <td className="py-2 text-center">{row.id}</td>
-                  <td className="py-2 text-center">{row.name}</td>
-                  <td className="py-2 text-center">{row.percentage}%</td>
-                  <td className="py-2 text-center">
-                    {row.status === true ? "Activo" : "Inactivo"}
-                  </td>
-                  <td className="py-2 text-center">
-                    <button onClick={() => handleEditClick(row)}>
-                      <img
-                        src="/images/icons/edit.png"
-                        alt="Editar"
-                        className="inline h-7 box-shadow-image"
-                      />
-                    </button>
-                  </td>
-                  <td className="py-2 text-center">
-                    <button onClick={() => handleDelete(row.id)}>
-                      <img
-                        src="/images/icons/trash.png"
-                        alt="Eliminar"
-                        className="inline h-8 box-shadow-image"
-                      />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          )}
+        </tbody>
+      </table>
 
       {/* Paginator */}
       {tax.length > 0 ? (
@@ -379,7 +377,7 @@ function TableTax({ onLogout = () => {} }) {
                 </button>
               </TEModalHeader>
               {/* <!--Modal body--> */}
-              <TEModalBody>
+              <TEModalBody className="bg-white">
                 <div className="flex py-3">
                   <input
                     type="text"
@@ -430,7 +428,7 @@ function TableTax({ onLogout = () => {} }) {
                   </select>
                 </div>
               </TEModalBody>
-              <TEModalFooter>
+              <TEModalFooter className="bg-white">
                 <TERipple rippleColor="light">
                   <button
                     type="button"
