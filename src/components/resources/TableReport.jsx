@@ -1309,7 +1309,7 @@ function TableReport({ onLogout = () => {} }) {
         <TEModal show={showModal} setShow={setShowModal}>
           <TEModalDialog size="lg">
             <TEModalContent>
-              <TEModalHeader>
+              <TEModalHeader className="bg-lime-700/75 text-white">
                 {/* <!--Modal title--> */}
                 <h5 className="text-xl font-medium leading-normal text-neutral-800 dark:text-neutral-200">
                   Cargar Muestras
@@ -1422,7 +1422,7 @@ function TableReport({ onLogout = () => {} }) {
         <TEModal show={showModalDelete} setShow={setShowModalDelete}>
           <TEModalDialog>
             <TEModalContent>
-              <TEModalHeader>
+              <TEModalHeader className="bg-lime-700/75 text-white">
                 {/* <!--Modal title--> */}
                 <h5 className="text-xl font-medium leading-normal text-neutral-800 dark:text-neutral-200">
                   Eliminar de el inventario

@@ -95,13 +95,6 @@ function InventaryGeneral({ onLogout = () => {} }) {
       wholesale_price: wholesalePrice,
     };
 
-    const movementsData = {
-      movement_type: "Entrada",
-      product_id: code,
-      quantity: stock,
-      description: "Entrada por inventario",
-    };
-
     const productData = {
       code: code,
       name: item,
@@ -119,7 +112,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
       });
 
       if (response.ok) {
-        await fetch(`${API_BASE_URL}/products/create`, {
+        const responseProduct = await fetch(`${API_BASE_URL}/products/create`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -128,23 +121,36 @@ function InventaryGeneral({ onLogout = () => {} }) {
           body: JSON.stringify(productData),
         });
 
-        await response.json();
-        const responseMovements = await fetch(
-          `${API_BASE_URL}/movements/create`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(movementsData),
-          }
-        );
-        await responseMovements.json();
-        toast.success("¡Producto agregado con exito!");
-        resetForm();
-        setShowModalTopRight(false);
-        setRefreshKey((prevKey) => prevKey + 1);
+        const infoProduct = await responseProduct.json();
+        console.log(infoProduct.id);
+
+        if (infoProduct.id !== undefined) {
+          
+          const movementsData = {
+            movement_type: "Entrada",
+            product_id: infoProduct.id,
+            quantity: stock,
+            description: "Entrada por inventario",
+          };
+  
+          const responseMovements = await fetch(
+            `${API_BASE_URL}/movements/create`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(movementsData),
+            }
+          );
+          await responseMovements.json();
+          toast.success("¡Producto agregado con exito!");
+          resetForm();
+          setShowModalTopRight(false);
+          setRefreshKey((prevKey) => prevKey + 1);
+        }
+
       } else {
         const error = await response.json();
 
@@ -413,7 +419,7 @@ function InventaryGeneral({ onLogout = () => {} }) {
                   </select>
                 </div>
 
-                <h5 className="text-xl font-medium leading-normal text-neutral-800 dark:text-neutral-200">
+                <h5 className="text-xl font-medium leading-normal text-neutral-800 dark:text-neutral-700">
                   Tipo De Precio
                 </h5>
 

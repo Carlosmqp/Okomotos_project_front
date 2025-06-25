@@ -417,7 +417,7 @@ function TableWithSearch({ onLogout = () => {} }) {
                 : "Cargando..."}
             </span>
             <span className="mx-40">
-              NTI: {clientData?.identification || "Cargando..."}
+              NIT: {clientData?.identification || "Cargando..."}
             </span>
             <span className="">
               TELEFONO: {clientData?.phone || "Cargando..."}

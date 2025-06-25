@@ -81,7 +81,7 @@ function SailGraphic({ report, onLogout = () => {} }) {
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/inventory/stock_Inventario`,
+        `${API_BASE_URL}/inventory/inventary_stock`,
         {
           method: "GET",
           headers: {

@@ -24,7 +24,7 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
       let url = "";
       setLoadingScreen(true);
       if (selectedReport === "1") {
-        url += `${API_BASE_URL}/inventory/reporte_inventario?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
+        url += `${API_BASE_URL}/inventory/inventary_report?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
       } else if (selectedReport === "2") {
         url += `${API_BASE_URL}/movements?search=${searchTerm2}&page=${currentPage}&per_page=${perPage}`;
         url += "&movement_type=Salida";
@@ -102,7 +102,7 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
       let report = "";
 
       if (selectedReport === "1") {
-        url += `${API_BASE_URL}/inventory/reporte_inventario?search=${searchTerm2}&per_page=10000`;
+        url += `${API_BASE_URL}/inventory/inventary_report?search=${searchTerm2}&per_page=10000`;
         report = "Reporte_General";
       } else if (selectedReport === "2") {
         url = `${API_BASE_URL}/movements?search=${searchTerm2}&per_page=10000&movement_type=Salida`;
@@ -227,7 +227,7 @@ function TableReportGeneral({ selectedReport, onLogout = () => {} }) {
       let tittle = "";
 
       if (selectedReport === "1") {
-        url += `${API_BASE_URL}/inventory/reporte_inventario?search=${searchTerm2}&per_page=10000`;
+        url += `${API_BASE_URL}/inventory/inventary_report?search=${searchTerm2}&per_page=10000`;
         report = "Reporte_General";
         tittle = "Reporte General";
       } else if (selectedReport === "2") {

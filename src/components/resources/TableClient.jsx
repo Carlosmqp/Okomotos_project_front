@@ -18,7 +18,7 @@ function TableClient({ onLogout = () => {} }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [perPage] = useState(10);
-  const [clients, setClients] = useState(null);
+  const [clients, setClients] = useState([]);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModalTopRight, setShowModalTopRight] = useState(false);
@@ -41,7 +41,6 @@ function TableClient({ onLogout = () => {} }) {
       if (response.ok) {
         const data = await response.json();
         setClients(data.data);
-        // console.log(data.data);
         setTotalPages(data.last_page);
       } else if (
         !response.ok &&
@@ -89,11 +88,11 @@ function TableClient({ onLogout = () => {} }) {
         }
       } catch (error) {
         console.error("Error:", error);
-      } finally {
-        setLoading(false);
       }
     };
+
     fetchCity();
+    
     const delayDebounceFn = setTimeout(() => {
       fetchClients(token);
     }, 500);
@@ -310,14 +309,14 @@ function TableClient({ onLogout = () => {} }) {
                 Cargando...
               </td>
             </tr>
-          ) : Array.isArray(clients) && clients.length === 0  ? (
+          ) : clients.length === 0 ? (
             <tr>
               <td colSpan="7" className="py-4 text-center text-gray-500">
                 No hay clientes disponibles.
               </td>
             </tr>
           ) : (
-            clients?.map((row) => (
+            clients.map((row) => (
               <tr
                 key={row.id}
                 className="even:border-lime-800/55 odd:border-lime-800/55 border-b-2 hover:bg-lime-200/55"
@@ -357,7 +356,7 @@ function TableClient({ onLogout = () => {} }) {
 
       {/* Paginator */}
 
-      {Array.isArray(clients) && clients.length === 0 ? (
+      {clients.length > 0 ? (
         <div className="flex justify-end w-full">
           <Pagination
             totalPages={totalPages}
